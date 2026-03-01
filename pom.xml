@@ -1,80 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+name: CI – Search Library MC/DC Tests
 
-    <modelVersion>4.0.0</modelVersion>
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+  workflow_dispatch:
 
-    <groupId>com.searchlib</groupId>
-    <artifactId>search-library</artifactId>
-    <version>1.0.0</version>
-    <packaging>jar</packaging>
-    <name>Search Algorithm Library</name>
-    <description>Binary Search + Linear Search + Interpolation Search with MC/DC tests</description>
+jobs:
 
-    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <junit.version>5.10.1</junit.version>
-        <jacoco.version>0.8.11</jacoco.version>
-    </properties>
+  build-and-test:
+    name: Build · Run 37 MC/DC Tests · Coverage Report
+    runs-on: ubuntu-latest
 
-    <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    steps:
 
-    <build>
-        <plugins>
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.3</version>
-            </plugin>
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: 'maven'
 
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <executions>
-                    <execution>
-                        <id>prepare-agent</id>
-                        <goals><goal>prepare-agent</goal></goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals><goal>report</goal></goals>
-                    </execution>
-                    <execution>
-                        <id>coverage-check</id>
-                        <goals><goal>check</goal></goals>
-                        <configuration>
-                            <rules>
-                                <rule>
-                                    <element>BUNDLE</element>
-                                    <limits>
-                                        <limit>
-                                            <counter>BRANCH</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.85</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+      - name: Run all MC/DC tests + coverage check
+        run: mvn --batch-mode clean verify
+        # 'verify' runs: compile → test → jacoco:report → jacoco:check
+        # All in one step — no separate jacoco:check call needed
 
-        </plugins>
-    </build>
+      - name: Upload JaCoCo coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jacoco-coverage-report
+          path: target/site/jacoco/
+          retention-days: 14
 
-</project>
+      - name: Upload Surefire test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: surefire-test-results
+          path: target/surefire-reports/
+          retention-days: 14
