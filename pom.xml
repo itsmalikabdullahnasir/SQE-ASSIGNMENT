@@ -6,13 +6,18 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- ── Project identity ───────────────────────────────────── -->
     <groupId>com.searchlib</groupId>
     <artifactId>search-library</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <n>Search Algorithm Library</n>
-    <description>Binary Search + Linear Search + Interpolation Search with MC/DC tests</description>
+    <name>Search Algorithm Library</name>
+    <description>
+        Binary Search + Linear Search + Interpolation Search
+        with MC/DC test suite and JaCoCo coverage reporting.
+    </description>
 
+    <!-- ── Global properties ──────────────────────────────────── -->
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -21,6 +26,7 @@
         <jacoco.version>0.8.11</jacoco.version>
     </properties>
 
+    <!-- ── Test dependency ────────────────────────────────────── -->
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -33,36 +39,37 @@
     <build>
         <plugins>
 
+            <!-- Discovers and runs JUnit 5 tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.3</version>
             </plugin>
 
+            <!-- JaCoCo: measures code coverage during test runs -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.11</version>
+                <version>${jacoco.version}</version>
                 <executions>
+
+                    <!-- 1. Attach coverage agent BEFORE tests run -->
                     <execution>
                         <id>prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
+                        <goals><goal>prepare-agent</goal></goals>
                     </execution>
+
+                    <!-- 2. Generate HTML / XML report AFTER tests finish -->
                     <execution>
                         <id>report</id>
                         <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
+                        <goals><goal>report</goal></goals>
                     </execution>
+
+                    <!-- 3. Fail the build if branch coverage < 85% -->
                     <execution>
                         <id>coverage-check</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
+                        <goals><goal>check</goal></goals>
                         <configuration>
                             <rules>
                                 <rule>
@@ -78,6 +85,7 @@
                             </rules>
                         </configuration>
                     </execution>
+
                 </executions>
             </plugin>
 
