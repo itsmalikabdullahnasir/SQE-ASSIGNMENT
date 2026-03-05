@@ -92,15 +92,6 @@ class SearchLibraryTest {
     }
 
 
-    // ════════════════════════════════════════════════════════════════
-    //  SECTION 2 — LINEAR SEARCH
-    //  CFG paths tested:
-    //    Guard path    : null / empty → return -1
-    //    First index   : arr[0] == target (loop exits immediately)
-    //    Middle index  : target found partway through
-    //    Last index    : loop runs to the end
-    //    Not found     : loop completes, no match
-    // ════════════════════════════════════════════════════════════════
     @Nested
     @DisplayName("2. LinearSearch — All-Paths Coverage")
     class LinearSearchTests {
@@ -163,18 +154,7 @@ class SearchLibraryTest {
     }
 
 
-    // ════════════════════════════════════════════════════════════════
-    //  SECTION 3 — INTERPOLATION SEARCH
-    //  CFG paths tested:
-    //    Guard path         : null / empty → return -1
-    //    Out-of-range low   : target < arr[low] → while never entered
-    //    Out-of-range high  : target > arr[high] → while never entered
-    //    Found at probe     : arr[pos] == target on first estimate
-    //    Right adjustment   : arr[pos] < target → low = pos+1
-    //    Left adjustment    : arr[pos] > target → high = pos-1
-    //    low == high branch : single element remains in search space
-    //    Not found          : search ends with no match
-    // ════════════════════════════════════════════════════════════════
+
     @Nested
     @DisplayName("3. InterpolationSearch — All-Paths Coverage")
     class InterpolationSearchTests {
@@ -253,17 +233,7 @@ class SearchLibraryTest {
     }
 
 
-    // ════════════════════════════════════════════════════════════════
-    //  SECTION 4 — SEARCH ORDER  (MC/DC + All-Paths)
-    //
-    //  MC/DC conditions:
-    //    C1 = data.length == 0
-    //    C2 = algorithm == BINARY
-    //    C3 = algorithm == LINEAR
-    //    C4 = algorithm == INTERPOLATION
-    //
-    //  Each condition is independently proven to affect the outcome.
-    // ════════════════════════════════════════════════════════════════
+
     @Nested
     @DisplayName("4. SearchOrder — MC/DC + All-Paths Coverage")
     class SearchOrderTests {
@@ -278,10 +248,7 @@ class SearchLibraryTest {
             arr = new int[]{2, 4, 6, 8, 10, 12};
         }
 
-        // ── PATH P1  /  MC/DC  C1 = TRUE ─────────────────────────────
-        //  Proves: C1 ALONE forces a -1 return.
-        //  Flipping C1 from T→F (keeping everything else the same)
-        //  changes the outcome from "-1" to "algorithm runs".
+
         @Test
         @DisplayName("TC-SO-01 | PATH P1 | MC/DC C1=T | Empty array → -1")
         void emptyArrayGuard() {
