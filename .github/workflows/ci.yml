@@ -1,10 +1,10 @@
-# ══════════════════════════════════════════════════════════════════════════════
-#  ci.yml  —  GitHub Actions CI Workflow
-#  Search Algorithm Library  |  MC/DC Test Suite + JaCoCo Coverage
-# ══════════════════════════════════════════════════════════════════════════════
+﻿# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+#  ci.yml  - GitHub Actions CI Workflow
+#  Search Algorithm Library    MC/DC Test Suite + JaCoCo Coverage
+# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 #
 #  WHAT THIS FILE DOES (Plain English):
-#  ─────────────────────────────────────
+#  -------------------------------------
 #  Every time you PUSH code or open a PULL REQUEST to the main/master branch,
 #  GitHub will automatically:
 #    1. Spin up a fresh Ubuntu Linux virtual machine in the cloud
@@ -13,18 +13,10 @@
 #    4. Run ALL 37 MC/DC test cases using Maven
 #    5. Generate a JaCoCo HTML coverage report
 #    6. Upload the coverage report so you can download and inspect it
-#    7. Fail the build (red X) if any test fails or coverage drops below 80%
+#    7. Fail the build (red X) if any test fails or coverage drops below 85%
 #
-#  TEMPLATE SOURCE:
-#  ─────────────────
-#  Based on the official GitHub Actions starter workflow for Java + Maven:
-#  https://docs.github.com/en/actions/how-tos/write-workflows/use-workflow-templates
-#  (Actions → New workflow → Java with Maven)
-#
-# ══════════════════════════════════════════════════════════════════════════════
-
+# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 name: "CI - MC/DC Tests + Coverage"
-
 on:
   push:
     branches:
@@ -35,42 +27,32 @@ on:
       - main
       - master
   workflow_dispatch:
-
 jobs:
-
   build-and-test:
-
     name: "Build - Run MC/DC Tests - Coverage Report"
     runs-on: ubuntu-latest
-
     steps:
-
       - name: "Step 1 - Checkout Code"
         uses: actions/checkout@v4
-
       - name: "Step 2 - Set up Java 11"
         uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'temurin'
           cache: 'maven'
-
       - name: "Step 3 - Run All 37 MC/DC Tests"
-        working-directory: search-library
         run: mvn --batch-mode verify
-
       - name: "Step 4 - Upload JaCoCo Coverage Report"
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: jacoco-coverage-report
-          path: search-library/target/site/jacoco/
+          path: target/site/jacoco/
           retention-days: 30
-
       - name: "Step 5 - Upload Surefire Test Results"
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: surefire-test-results
-          path: search-library/target/surefire-reports/
+          path: target/surefire-reports/
           retention-days: 30
